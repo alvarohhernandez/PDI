@@ -15,8 +15,8 @@
             <md-menu-item @click="grises1">Tono de Grises 1</md-menu-item>
             <md-menu-item @click="blue">Blue</md-menu-item>
             <md-menu-item @click="red">Red</md-menu-item>
-            <md-menu-item>My Item 3</md-menu-item>
-            <md-menu-item>My Item 3</md-menu-item>
+            <md-menu-item @click="green">Green</md-menu-item>
+            <md-menu-item @click="brillo">Brillo</md-menu-item>
             <md-menu-item>My Item 3</md-menu-item>
             <md-menu-item>My Item 3</md-menu-item>
             <md-menu-item>My Item 3</md-menu-item>
@@ -90,6 +90,29 @@
               const imageData = this.ctx.getImageData(i, j, 1, 1);
               imageData.data[1] = 0;
               imageData.data[2] = 0;
+              this.ctx.putImageData(imageData, i, j);
+            }
+          }
+      },
+      async green() {
+          await this.loadContext();
+          for (var i = 0; i < this.canvas.width; i++) {
+            for (let j = 0; j < this.canvas.height; j++) {
+              const imageData = this.ctx.getImageData(i, j, 1, 1);
+              imageData.data[0] = 0;
+              imageData.data[2] = 0;
+              this.ctx.putImageData(imageData, i, j);
+            }
+          }
+      },
+      async brillo() {
+          await this.loadContext();
+          for (var i = 0; i < this.canvas.width; i++) {
+            for (let j = 0; j < this.canvas.height; j++) {
+              const imageData = this.ctx.getImageData(i, j, 1, 1);
+              imageData.data[0] = (imageData.data[0] + 70 > 255) ? 255 : imageData.data[0] + 70;
+              imageData.data[1] = (imageData.data[1] + 70 > 255) ? 255 : imageData.data[1] + 70;
+              imageData.data[2] = (imageData.data[2] + 70 > 255) ? 255 : imageData.data[2] + 70;
               this.ctx.putImageData(imageData, i, j);
             }
           }
