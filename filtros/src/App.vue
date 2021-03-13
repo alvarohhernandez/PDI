@@ -31,9 +31,9 @@
             <md-menu-item @click="grises4">Tono de Grises 4</md-menu-item>
             <md-menu-item @click="grises5">Tono de Grises 5</md-menu-item>
             <md-menu-item @click="grises6">Tono de Grises 6</md-menu-item>
-            <md-menu-item @click="blue">Blue</md-menu-item>
-            <md-menu-item @click="red">Red</md-menu-item>
-            <md-menu-item @click="green">Green</md-menu-item>
+            <md-menu-item @click="grises7">Tono de Grises 7</md-menu-item>
+            <md-menu-item @click="grises8">Tono de Grises 8</md-menu-item>
+            <md-menu-item @click="grises9">Tono de Grises 9</md-menu-item>
           </md-menu-content>
         </md-menu>
         </div>
