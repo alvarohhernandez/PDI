@@ -37,9 +37,9 @@ const tarea2 = {
         for (var i = 0; i < canvas.width; i++) {
             for (let j = 0; j < canvas.height; j++) {
                 const imageData = ctx.getImageData(i, j, 1, 1);
-                imageData.data[0] = imageData.data[0] && red;
-                imageData.data[1] = imageData.data[1] && green;
-                imageData.data[2] = imageData.data[2] && blue;
+                imageData.data[0] = imageData.data[0] & red;
+                imageData.data[1] = imageData.data[1] & green;
+                imageData.data[2] = imageData.data[2] & blue;
                 ctx.putImageData(imageData, i, j);
             }
         }
