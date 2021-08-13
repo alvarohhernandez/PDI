@@ -18,6 +18,9 @@
           <md-menu-content class="maxHeightNone">
             <md-menu-item @click="brilloFilter = true">Brillo</md-menu-item>
             <md-menu-item @click="mosaicoFilter = true">Mosaico</md-menu-item>
+            <md-menu-item @click="alto_contraste">Alto Contraste</md-menu-item>
+            <md-menu-item @click="inverso">Inverso</md-menu-item>
+            <md-menu-item @click="rgbFilter = true">RGB</md-menu-item>
           </md-menu-content>
         </md-menu>
 
@@ -38,14 +41,21 @@
         </md-menu>
         </div>
 
-        <div class="md-layout md-gutter md-alignment-center-center">
-          <div class="md-layout-item md-size-35">
-            <img :src="imageUrl" id="original-image" class="responsive-img"/>
-          </div>
-          <div class="md-layout-item md-size-35">
-            <canvas id="canvas"></canvas>
-          </div>
-        </div>
+        <v-wait for="main wait">
+            <template slot="waiting">
+              <div style="background-color: green;">
+                <img src="@/assets/loading.gif" />
+              </div>
+            </template>
+            <div class="md-layout md-gutter md-alignment-center-center">
+              <div class="md-layout-item md-size-35">
+                <img :src="imageUrl" id="original-image" class="responsive-img"/>
+              </div>
+              <div class="md-layout-item md-size-35">
+                <canvas id="canvas"></canvas>
+              </div>
+            </div>
+        </v-wait>
 
         <md-divider></md-divider>
 
@@ -75,19 +85,41 @@
           </div>
           <md-button class="md-raised md-primary" @click="mosaico">Aceptar</md-button>
         </div>
+
+        <div class="md-layout md-gutter md-alignment-center-center rgb-filter" v-if="rgbFilter">
+          <div class="md-layout-item md-size-30">
+            R <br>
+            <input type="range" min="0" max="255" v-model.number="red_amount"> {{ red_amount }}%
+          </div>
+          <div class="md-layout-item md-size-30">
+            G <br>
+            <input type="range" min="0" max="255" v-model.number="green_amount"> {{ green_amount }}%
+          </div>
+          <div class="md-layout-item md-size-30">
+            B <br>
+            <input type="range" min="0" max="255" v-model.number="blue_amount"> {{ blue_amount }}%
+          </div>
+          <md-button class="md-raised md-primary" @click="rgb">Aceptar</md-button>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+  import tarea1 from "./tarea1.js";
+  import tarea2 from "./tarea2.js";
   export default {
     components: {
     },
     data: () => ({
       amount: 0,
+      red_amount: 0,
+      green_amount: 0,
+      blue_amount: 0,
       brilloFilter: false,
       mosaicoFilter: false,
+      rgbFilter: false,
       imageUrl: null,
       canvas: null,
       ctx: null,
@@ -111,150 +143,59 @@
           this.formula = "Gray = (Red + Green + Blue) / 3";
           this.cleanFilters();
           await this.loadContext();
-          for (var i = 0; i < this.canvas.width; i++) {
-            for (let j = 0; j < this.canvas.height; j++) {
-              const imageData = this.ctx.getImageData(i, j, 1, 1);
-              const gray = Math.trunc((imageData.data[0] + imageData.data[1] + imageData.data[2]) / 3);
-              imageData.data[0] = gray;
-              imageData.data[1] = gray;
-              imageData.data[2] = gray;
-              this.ctx.putImageData(imageData, i, j);
-            }
-          }
+          this.ctx = await tarea1.grises1(this.canvas, this.ctx);
       },
       async grises2() {
           this.formula = "Gray = (Red * 0.3 + Green * 0.59 + Blue * 0.11)";
           this.cleanFilters();
           await this.loadContext();
-          for (var i = 0; i < this.canvas.width; i++) {
-            for (let j = 0; j < this.canvas.height; j++) {
-              const imageData = this.ctx.getImageData(i, j, 1, 1);
-              const gray = (imageData.data[0] * 0.3 + imageData.data[1] * 0.59 + imageData.data[2] * 0.11);
-              imageData.data[0] = gray;
-              imageData.data[1] = gray;
-              imageData.data[2] = gray;
-              this.ctx.putImageData(imageData, i, j);
-            }
-          }
+          this.ctx = tarea1.grises2(this.canvas, this.ctx);
       },
       async grises3() {
           this.formula = "Gray = (Red * 0.2126 + Green * 0.7152 + Blue * 0.0722)";
           this.cleanFilters();
           await this.loadContext();
-          for (var i = 0; i < this.canvas.width; i++) {
-            for (let j = 0; j < this.canvas.height; j++) {
-              const imageData = this.ctx.getImageData(i, j, 1, 1);
-              const gray = (imageData.data[0] * 0.2126 + imageData.data[1] * 0.7152 + imageData.data[2] * 0.0722);
-              imageData.data[0] = gray;
-              imageData.data[1] = gray;
-              imageData.data[2] = gray;
-              this.ctx.putImageData(imageData, i, j);
-            }
-          }
+          this.ctx = tarea1.grises3(this.canvas, this.ctx);
       },
       async grises4() {
           this.formula = "Gray = ( Max(Red, Green, Blue) + Min(Red, Green, Blue) ) / 2";
           this.cleanFilters();
           await this.loadContext();
-          for (var i = 0; i < this.canvas.width; i++) {
-            for (let j = 0; j < this.canvas.height; j++) {
-              const imageData = this.ctx.getImageData(i, j, 1, 1);
-              const max = Math.max(imageData.data[0], imageData.data[1], imageData.data[2]);
-              const min = Math.min(imageData.data[0], imageData.data[1], imageData.data[2]);
-              const gray = Math.trunc((max + min) / 2);
-              imageData.data[0] = gray;
-              imageData.data[1] = gray;
-              imageData.data[2] = gray;
-              this.ctx.putImageData(imageData, i, j);
-            }
-          }
+          this.ctx = tarea1.grises4(this.canvas, this.ctx);
       },
       async grises5() {
           this.formula = "Gray = Max(Red, Green, Blue)";
           this.cleanFilters();
           await this.loadContext();
-          for (var i = 0; i < this.canvas.width; i++) {
-            for (let j = 0; j < this.canvas.height; j++) {
-              const imageData = this.ctx.getImageData(i, j, 1, 1);
-              const max = Math.max(imageData.data[0], imageData.data[1], imageData.data[2]);
-              imageData.data[0] = max;
-              imageData.data[1] = max;
-              imageData.data[2] = max;
-              this.ctx.putImageData(imageData, i, j);
-            }
-          }
+          this.ctx = tarea1.grises5(this.canvas, this.ctx);
       },
       async grises6() {
           this.formula = "Gray = Min(Red, Green, Blue)";
           this.cleanFilters();
           await this.loadContext();
-          for (var i = 0; i < this.canvas.width; i++) {
-            for (let j = 0; j < this.canvas.height; j++) {
-              const imageData = this.ctx.getImageData(i, j, 1, 1);
-              const min = Math.min(imageData.data[0], imageData.data[1], imageData.data[2]);
-              imageData.data[0] = min;
-              imageData.data[1] = min;
-              imageData.data[2] = min;
-              this.ctx.putImageData(imageData, i, j);
-            }
-          }
+          this.ctx = tarea1.grises6(this.canvas, this.ctx);
       },
       async grises7() {
           this.formula = "Gray = Red";
           this.cleanFilters();
           await this.loadContext();
-          for (var i = 0; i < this.canvas.width; i++) {
-            for (let j = 0; j < this.canvas.height; j++) {
-              const imageData = this.ctx.getImageData(i, j, 1, 1);
-              const gray = imageData.data[0];
-              imageData.data[0] = gray;
-              imageData.data[1] = gray;
-              imageData.data[2] = gray;
-              this.ctx.putImageData(imageData, i, j);
-            }
-          }
+          this.ctx = tarea1.grises7(this.canvas, this.ctx);
       },
       async grises8() {
           this.formula = "Gray = Green";
           this.cleanFilters();
           await this.loadContext();
-          for (var i = 0; i < this.canvas.width; i++) {
-            for (let j = 0; j < this.canvas.height; j++) {
-              const imageData = this.ctx.getImageData(i, j, 1, 1);
-              const gray = imageData.data[1];
-              imageData.data[0] = gray;
-              imageData.data[1] = gray;
-              imageData.data[2] = gray;
-              this.ctx.putImageData(imageData, i, j);
-            }
-          }
+          this.ctx = tarea1.grises8(this.canvas, this.ctx);
       },
       async grises9() {
-          this.formula = "Gray = Green";
+          this.formula = "Gray = Blue";
           this.cleanFilters();
           await this.loadContext();
-          for (var i = 0; i < this.canvas.width; i++) {
-            for (let j = 0; j < this.canvas.height; j++) {
-              const imageData = this.ctx.getImageData(i, j, 1, 1);
-              const gray = imageData.data[2];
-              imageData.data[0] = gray;
-              imageData.data[1] = gray;
-              imageData.data[2] = gray;
-              this.ctx.putImageData(imageData, i, j);
-            }
-          }
+          this.ctx = tarea1.grises9(this.canvas, this.ctx);
       },
       async brillo() {
           await this.loadContext();
-          for (var i = 0; i < this.canvas.width; i++) {
-            for (let j = 0; j < this.canvas.height; j++) {
-              const imageData = this.ctx.getImageData(i, j, 1, 1);
-              imageData.data[0] = (imageData.data[0] + this.amount > 255) ? 255 : imageData.data[0] + this.amount;
-              imageData.data[1] = (imageData.data[1] + this.amount > 255) ? 255 : imageData.data[1] + this.amount;
-              imageData.data[2] = (imageData.data[2] + this.amount > 255) ? 255 : imageData.data[2] + this.amount;
-              this.ctx.putImageData(imageData, i, j);
-            }
-          }
+          this.ctx = tarea1.brillo(this.canvas, this.ctx, this.amount);
       },
       async mosaico() {
           this.mosaico_width = (this.mosaico_width < this.canvas.width)
@@ -264,35 +205,27 @@
                                   ? this.mosaico_height
                                   : this.canvas.height;
           await this.loadContext();
-          for (var i = 0; i < this.canvas.width; i += this.mosaico_width) {
-            for (let j = 0; j < this.canvas.height; j += this.mosaico_height) {
-              const width = (this.canvas.width - i > this.mosaico_width)
-                                ? this.mosaico_width
-                                : this.canvas.width - i;
-              const height = (this.canvas.height - j > this.mosaico_height)
-                                ? this.mosaico_height
-                                : this.canvas.height - j;
-              const imageData = this.ctx.getImageData(i, j, width, height);
-              const total_pixels = imageData.data.length / 4;
-              console.log('Size', imageData.data.length);
-              console.log('Pixels', imageData.data.length / 4);
-              let red = 0;
-              let green = 0;
-              let blue = 0;
-              for (let k = 0; k <= imageData.data.length - 1; k += 4) {
-                red += imageData.data[k];
-                green += imageData.data[k+1];
-                blue += imageData.data[k+2];
-              }
-              for (let k = 0; k <= imageData.data.length - 1; k += 4) {
-                imageData.data[k] = Math.trunc(red / total_pixels);
-                imageData.data[k+1] = Math.trunc(green / total_pixels);
-                imageData.data[k+2] = Math.trunc(blue / total_pixels);
-              }
-              this.ctx.putImageData(imageData, i, j);
-            }
-          }
+          this.ctx = tarea1.mosaico(this.canvas, this.ctx, this.mosaico_width, this.mosaico_height);
       },
+
+      async alto_contraste() {
+          this.cleanFilters();
+          await this.loadContext();
+          this.ctx = tarea2.altoContraste(this.canvas, this.ctx);
+      },
+
+      async inverso() {
+          this.cleanFilters();
+          await this.loadContext();
+          this.ctx = tarea2.inverso(this.canvas, this.ctx);
+      },
+
+      async rgb() {
+          this.cleanFilters();
+          await this.loadContext();
+          this.ctx = tarea2.rgb(this.canvas, this.ctx, this.red_amount, this.green_amount, this.blue_amount);
+      },
+
       loadContext() {
         return new Promise((resolve) => {
           const img = new Image();
