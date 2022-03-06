@@ -48,9 +48,7 @@ const tarea1 = {
         for (var i = 0; i < canvas.width; i++) {
             for (let j = 0; j < canvas.height; j++) {
                 const imageData = ctx.getImageData(i, j, 1, 1);
-                const max = Math.max(imageData.data[0], imageData.data[1], imageData.data[2]);
-                const min = Math.min(imageData.data[0], imageData.data[1], imageData.data[2]);
-                const gray = Math.trunc((max + min) / 2);
+                const gray = (imageData.data[0] * 0.299 + imageData.data[1] * 0.587 + imageData.data[2] * 0.114);
                 imageData.data[0] = gray;
                 imageData.data[1] = gray;
                 imageData.data[2] = gray;
@@ -66,6 +64,23 @@ const tarea1 = {
             for (let j = 0; j < canvas.height; j++) {
                 const imageData = ctx.getImageData(i, j, 1, 1);
                 const max = Math.max(imageData.data[0], imageData.data[1], imageData.data[2]);
+                const min = Math.min(imageData.data[0], imageData.data[1], imageData.data[2]);
+                const gray = Math.trunc((max + min) / 2);
+                imageData.data[0] = gray;
+                imageData.data[1] = gray;
+                imageData.data[2] = gray;
+                ctx.putImageData(imageData, i, j);
+            }
+        }
+
+        return ctx;
+    },
+
+    grises6(canvas, ctx) {
+        for (var i = 0; i < canvas.width; i++) {
+            for (let j = 0; j < canvas.height; j++) {
+                const imageData = ctx.getImageData(i, j, 1, 1);
+                const max = Math.max(imageData.data[0], imageData.data[1], imageData.data[2]);
                 imageData.data[0] = max;
                 imageData.data[1] = max;
                 imageData.data[2] = max;
@@ -76,7 +91,7 @@ const tarea1 = {
         return ctx;
     },
 
-    grises6(canvas, ctx) {
+    grises7(canvas, ctx) {
         for (var i = 0; i < canvas.width; i++) {
             for (let j = 0; j < canvas.height; j++) {
                 const imageData = ctx.getImageData(i, j, 1, 1);
@@ -91,14 +106,11 @@ const tarea1 = {
         return ctx;
     },
 
-    grises7(canvas, ctx) {
+    rojo(canvas, ctx) {
         for (var i = 0; i < canvas.width; i++) {
             for (let j = 0; j < canvas.height; j++) {
                 const imageData = ctx.getImageData(i, j, 1, 1);
-                const gray = imageData.data[0];
-                imageData.data[0] = gray;
-                imageData.data[1] = gray;
-                imageData.data[2] = gray;
+                imageData.data[1] = imageData.data[2] = 0;
                 ctx.putImageData(imageData, i, j);
             }
         }
@@ -106,14 +118,11 @@ const tarea1 = {
         return ctx;
     },
 
-    grises8(canvas, ctx) {
+    verde(canvas, ctx) {
         for (var i = 0; i < canvas.width; i++) {
             for (let j = 0; j < canvas.height; j++) {
                 const imageData = ctx.getImageData(i, j, 1, 1);
-                const gray = imageData.data[1];
-                imageData.data[0] = gray;
-                imageData.data[1] = gray;
-                imageData.data[2] = gray;
+                imageData.data[0] = imageData.data[2] = 0;
                 ctx.putImageData(imageData, i, j);
             }
         }
@@ -121,28 +130,11 @@ const tarea1 = {
         return ctx;
     },
 
-    grises9(canvas, ctx) {
+    azul(canvas, ctx) {
         for (var i = 0; i < canvas.width; i++) {
             for (let j = 0; j < canvas.height; j++) {
                 const imageData = ctx.getImageData(i, j, 1, 1);
-                const gray = imageData.data[2];
-                imageData.data[0] = gray;
-                imageData.data[1] = gray;
-                imageData.data[2] = gray;
-                ctx.putImageData(imageData, i, j);
-            }
-        }
-
-        return ctx;
-    },
-
-    brillo(canvas, ctx, amount) {
-        for (var i = 0; i < canvas.width; i++) {
-            for (let j = 0; j < canvas.height; j++) {
-                const imageData = ctx.getImageData(i, j, 1, 1);
-                imageData.data[0] = (imageData.data[0] + amount > 255) ? 255 : imageData.data[0] + amount;
-                imageData.data[1] = (imageData.data[1] + amount > 255) ? 255 : imageData.data[1] + amount;
-                imageData.data[2] = (imageData.data[2] + amount > 255) ? 255 : imageData.data[2] + amount;
+                imageData.data[0] = imageData.data[1] = 0;
                 ctx.putImageData(imageData, i, j);
             }
         }
@@ -180,6 +172,52 @@ const tarea1 = {
                     imageData.data[k+1] = Math.trunc(green / total_pixels);
                     imageData.data[k+2] = Math.trunc(blue / total_pixels);
                 }
+                ctx.putImageData(imageData, i, j);
+            }
+        }
+
+        return ctx;
+    },
+
+    altoContraste(canvas, ctx) {
+        ctx = this.grises1(canvas, ctx);
+        for (var i = 0; i < canvas.width; i++) {
+            for (let j = 0; j < canvas.height; j++) {
+                const imageData = ctx.getImageData(i, j, 1, 1);
+                const gray = imageData.data[0] > 127 ? 255 : 0;
+                imageData.data[0] = gray;
+                imageData.data[1] = gray;
+                imageData.data[2] = gray;
+                ctx.putImageData(imageData, i, j);
+            }
+        }
+
+        return ctx;
+    },
+
+    inverso(canvas, ctx) {
+        ctx = this.grises1(canvas, ctx);
+        for (var i = 0; i < canvas.width; i++) {
+            for (let j = 0; j < canvas.height; j++) {
+                const imageData = ctx.getImageData(i, j, 1, 1);
+                const gray = imageData.data[0] > 127 ? 0 : 255;
+                imageData.data[0] = gray;
+                imageData.data[1] = gray;
+                imageData.data[2] = gray;
+                ctx.putImageData(imageData, i, j);
+            }
+        }
+
+        return ctx;
+    },
+
+    brillo(canvas, ctx, amount) {
+        for (var i = 0; i < canvas.width; i++) {
+            for (let j = 0; j < canvas.height; j++) {
+                const imageData = ctx.getImageData(i, j, 1, 1);
+                imageData.data[0] = (imageData.data[0] + amount > 255) ? 255 : imageData.data[0] + amount;
+                imageData.data[1] = (imageData.data[1] + amount > 255) ? 255 : imageData.data[1] + amount;
+                imageData.data[2] = (imageData.data[2] + amount > 255) ? 255 : imageData.data[2] + amount;
                 ctx.putImageData(imageData, i, j);
             }
         }

@@ -16,11 +16,16 @@
           <md-button md-menu-trigger>Filtros</md-button>
     
           <md-menu-content class="maxHeightNone">
-            <md-menu-item @click="brilloFilter = true">Brillo</md-menu-item>
+            <md-menu-item @click="rojo">Rojo</md-menu-item>
+            <md-menu-item @click="verde">Verde</md-menu-item>
+            <md-menu-item @click="azul">Azul</md-menu-item>
             <md-menu-item @click="mosaicoFilter = true">Mosaico</md-menu-item>
+            <md-menu-item @click="brilloFilter = true">Brillo</md-menu-item>
             <md-menu-item @click="alto_contraste">Alto Contraste</md-menu-item>
             <md-menu-item @click="inverso">Inverso</md-menu-item>
+<!--
             <md-menu-item @click="rgbFilter = true">RGB</md-menu-item>
+-->
           </md-menu-content>
         </md-menu>
 
@@ -35,10 +40,22 @@
             <md-menu-item @click="grises5">Tono de Grises 5</md-menu-item>
             <md-menu-item @click="grises6">Tono de Grises 6</md-menu-item>
             <md-menu-item @click="grises7">Tono de Grises 7</md-menu-item>
-            <md-menu-item @click="grises8">Tono de Grises 8</md-menu-item>
-            <md-menu-item @click="grises9">Tono de Grises 9</md-menu-item>
           </md-menu-content>
         </md-menu>
+<!--
+        <md-menu md-size="medium" md-align-trigger>
+          <md-button md-menu-trigger>Convolución</md-button>
+
+          <md-menu-content class="maxHeightNone">
+            <md-menu-item @click="blur1">Blur 1</md-menu-item>
+            <md-menu-item @click="grises2">Blur 2</md-menu-item>
+            <md-menu-item @click="grises3">Motion Blur</md-menu-item>
+            <md-menu-item @click="grises4">Encontrar Bordes</md-menu-item>
+            <md-menu-item @click="grises5">Sharpen</md-menu-item>
+            <md-menu-item @click="grises6">Emboss</md-menu-item>
+          </md-menu-content>
+        </md-menu>
+-->
         </div>
 
         <v-wait for="main wait">
@@ -176,22 +193,25 @@
           this.ctx = tarea1.grises6(this.canvas, this.ctx);
       },
       async grises7() {
-          this.formula = "Gray = Red";
+          this.formula = "Gray = Min(Red, Green, Blue)";
           this.cleanFilters();
           await this.loadContext();
           this.ctx = tarea1.grises7(this.canvas, this.ctx);
       },
-      async grises8() {
-          this.formula = "Gray = Green";
+      async rojo() {
           this.cleanFilters();
           await this.loadContext();
-          this.ctx = tarea1.grises8(this.canvas, this.ctx);
+          this.ctx = tarea1.rojo(this.canvas, this.ctx);
       },
-      async grises9() {
-          this.formula = "Gray = Blue";
+      async verde() {
           this.cleanFilters();
           await this.loadContext();
-          this.ctx = tarea1.grises9(this.canvas, this.ctx);
+          this.ctx = tarea1.verde(this.canvas, this.ctx);
+      },
+      async azul() {
+          this.cleanFilters();
+          await this.loadContext();
+          this.ctx = tarea1.azul(this.canvas, this.ctx);
       },
       async brillo() {
           await this.loadContext();
@@ -211,19 +231,25 @@
       async alto_contraste() {
           this.cleanFilters();
           await this.loadContext();
-          this.ctx = tarea2.altoContraste(this.canvas, this.ctx);
+          this.ctx = tarea1.altoContraste(this.canvas, this.ctx);
       },
 
       async inverso() {
           this.cleanFilters();
           await this.loadContext();
-          this.ctx = tarea2.inverso(this.canvas, this.ctx);
+          this.ctx = tarea1.inverso(this.canvas, this.ctx);
       },
 
       async rgb() {
           this.cleanFilters();
           await this.loadContext();
           this.ctx = tarea2.rgb(this.canvas, this.ctx, this.red_amount, this.green_amount, this.blue_amount);
+      },
+
+      async blur1() {
+          console.log('Log');
+          await this.loadContext();
+          tarea2.blur1(this.canvas, this.ctx);
       },
 
       loadContext() {
