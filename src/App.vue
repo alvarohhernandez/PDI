@@ -21,9 +21,9 @@
             <md-menu-item @click="azul">Azul</md-menu-item>
             <md-menu-item @click="mosaicoFilter = true">Mosaico</md-menu-item>
             <md-menu-item @click="brilloFilter = true">Brillo</md-menu-item>
+<!--
             <md-menu-item @click="alto_contraste">Alto Contraste</md-menu-item>
             <md-menu-item @click="inverso">Inverso</md-menu-item>
-<!--
             <md-menu-item @click="rgbFilter = true">RGB</md-menu-item>
 -->
           </md-menu-content>
@@ -65,10 +65,10 @@
               </div>
             </template>
             <div class="md-layout md-gutter md-alignment-center-center">
-              <div class="md-layout-item md-size-35">
+              <div class="md-layout-item md-size-35 canvas-image">
                 <img :src="imageUrl" id="original-image" class="responsive-img"/>
               </div>
-              <div class="md-layout-item md-size-35">
+              <div class="md-layout-item md-size-35 canvas-image">
                 <canvas id="canvas"></canvas>
               </div>
             </div>
@@ -327,5 +327,14 @@
   }
   .center-align {
     text-align: center;
+  }
+  .canvas-image {
+    display: flex;
+    height: 200vh;
+  }
+  img, canvas {
+    max-height: 100%;
+    margin: auto;
+    display: block;
   }
 </style>
